@@ -1,0 +1,16 @@
+{
+  "equipe": "andre-cunha",
+  "versao": "v2",
+  "executado_em": "2026-10-02T16:58:06+00:00",
+  "duracao_s": 38.9,
+  "caracteres_prompt": 1977,
+  "sha256_prompt": "8469ff6601c5f15b258790d04660c9c90391758755d5758b23aa438f5434e216",
+  "gerou_html": true,
+  "briefing_colado_pct": 0,
+  "custo_usd": 0.0718991,
+  "modelos": [
+    "claude-haiku-4-5-20251001"
+  ],
+  "sessao": "04577542-8126-4e45-b5e0-282a69a36e0e",
+  "resposta_final": "Arquivo criado com sucesso! O index.html contém:\n\n✅ **Estrutura completa:**\n- Título e subtítulo com data-testids\n- Campos readonly (Nome, Matrícula)\n- Formulário com select de sistemas, radios de tipo de acesso, textarea de justificativa\n- Resumo com botões Voltar e Abrir\n\n✅ **Validações implementadas:**\n- Sistema vazio → erro [erro-sistema]\n- Tipo não selecionado → erro [erro-tipo]  \n- Escrita com <20 caracteres → erro [erro-justificativa]\n- Erros desaparecem ao corrigir\n- Sem alerts/confirms/prompts\n\n✅ **Comportamentos dinâmicos:**\n- Justificativa oculta até selecionar Escrita\n- Contador atualiza em tempo real (0/20)\n- Cor verde (#2E7D32) quando ≥20 caracteres\n- Formulário → Resumo → Voltar mantém valores\n- Mensagem de sucesso ao abrir chamado\n\n✅ **CSS/JS inline** (nada externo) e estilo conforme especificado:\n- Fundo #2C2A29, cartão #F4F4F2, botões #3CDBC0\n\nPronto para QA automatizado com todos os data-testids exatos."
+}
