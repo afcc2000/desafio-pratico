@@ -1,0 +1,16 @@
+{
+  "equipe": "deyvid-carlos",
+  "versao": "v1",
+  "executado_em": "2026-10-02T20:15:33+00:00",
+  "duracao_s": 37.8,
+  "caracteres_prompt": 1645,
+  "sha256_prompt": "71e10f510e9a33667a371310cc57be3bb80297778bff19bd660ca4d234a6b041",
+  "gerou_html": true,
+  "briefing_colado_pct": 38,
+  "custo_usd": 0.1073348,
+  "modelos": [
+    "claude-sonnet-5-5"
+  ],
+  "sessao": "b1238d9a-9f15-4098-b3da-c94e9755ac2b",
+  "resposta_final": "Criei o `index.html` na pasta atual, com tudo num arquivo só e sem bibliotecas externas. Não abri a página no navegador nem rodei testes.\n\n**O que a página faz**\n- **Cabeçalho:** título \"Solicitação de acesso a sistema\" e subtítulo \"Seus dados já foram preenchidos pelo login\".\n- **Sistema:** dropdown com SEI, SIGEPE e GLPI, nessa ordem.\n- **Tipo de acesso:** dois checkboxes, Leitura e Escrita, que só deixam uma opção marcada por vez. O tipo é obrigatório.\n- **Justificativa:**\n  - O campo fica oculto em Leitura e aparece em Escrita, onde é obrigatório, com asterisco vermelho.\n  - O limite é de 20 caracteres, com contador `0/20`. Ao chegar em 20, o campo e o contador ficam verdes.\n- **Resumo:** o botão \"Revisar\" abre um resumo com o solicitante, o sistema, o tipo e a justificativa. \"Voltar e editar\" volta ao formulário com tudo preservado, e \"Abrir chamado\" conclui.\n- **Sucesso:** a mensagem segue o padrão pedido, \"Chamado #AAAA-NNNNN aberto com sucesso\", com o número em 5 dígitos completados com zeros. Nenhuma API é chamada.\n- **Visual:** usei as cores #2C2A29 e #3CDBC0.\n\n**Arquivos em branco**\nCriei `usuario-logado.json`, `resposta-api-exemplo.json` e `contrato-qa.md` vazios, como você pediu. Como o HTML é um arquivo só, ele não lê esses arquivos. Os dados de exemplo estão dentro do script (`USUARIO_LOGADO` e `RESPOSTA_API`). Quando você tiver o conteúdo real, é só colar nessas duas constantes. Hoje o chamado de exemplo tem id 42, o que gera `2026-00042`.\n\n**Suposições**\n- Li \"Quando escrita deve ficar oculto\" como \"quando *leitura* deve ficar oculto\".\n- Não vi o `contrato-qa.md`, então o HTML não segue nenhum requisito de teste dele. Confira depois que ele for preenchido.\n- Como os JSONs estão vazios, a leitura dos campos é tolerante. O nome vem de `nome` ou `name`. O número do chamado vem de `id` ou `ticket_id`, dentro de `data` ou na raiz. O ano vem de `date_creation`, e se não houver essa data usa o ano atual.\n\n**Ferramentas MCP**\nVárias ferramentas MCP ficaram "
+}

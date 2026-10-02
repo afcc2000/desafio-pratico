@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solicitação de acesso a sistema</title>
+<style>
+  :root { --dark:#2C2A29; --accent:#3CDBC0; --ok:#1f9d55; --err:#d93025; --bg:#f4f5f5; --line:#d6d8d8; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Segoe UI,Arial,sans-serif; background:var(--bg); color:var(--dark); }
+  header { background:var(--dark); color:#fff; padding:14px 24px; border-bottom:4px solid var(--accent); font-weight:600; letter-spacing:.5px; }
+  header span { color:var(--accent); }
+  main { max-width:620px; margin:32px auto; padding:0 16px; }
+  .card { background:#fff; border-radius:10px; padding:28px; box-shadow:0 2px 10px rgba(0,0,0,.08); }
+  h1 { margin:0 0 4px; font-size:1.5rem; }
+  .sub { margin:0 0 24px; color:#6b6968; }
+  .field { margin-bottom:20px; }
+  label.lbl, .lbl { display:block; font-weight:600; margin-bottom:6px; }
+  .req { color:#e00; margin-left:2px; }
+  select, textarea { width:100%; padding:10px; font:inherit; border:2px solid var(--line); border-radius:6px; background:#fff; color:var(--dark); }
+  select:focus, textarea:focus, button:focus-visible, input:focus-visible { outline:3px solid var(--accent); outline-offset:1px; }
+  textarea { resize:vertical; min-height:80px; }
+  textarea.full { border-color:var(--ok); background:#eaf8ef; }
+  .checks { display:flex; gap:24px; }
+  .checks label { display:flex; align-items:center; gap:6px; cursor:pointer; }
+  .checks input { width:18px; height:18px; accent-color:var(--dark); }
+  .counter { text-align:right; font-size:.85rem; color:#6b6968; margin-top:4px; }
+  .counter.full { color:var(--ok); font-weight:600; }
+  .error { color:var(--err); font-size:.85rem; margin-top:4px; min-height:1em; }
+  .actions { display:flex; gap:12px; justify-content:flex-end; margin-top:8px; }
+  button { font:inherit; font-weight:600; padding:10px 22px; border-radius:6px; cursor:pointer; border:2px solid var(--dark); }
+  .primary { background:var(--accent); border-color:var(--accent); color:var(--dark); }
+  .primary:hover { filter:brightness(.93); }
+  .secondary { background:#fff; color:var(--dark); }
+  .secondary:hover { background:var(--dark); color:#fff; }
+  dl { margin:0 0 20px; }
+  dt { font-size:.8rem; text-transform:uppercase; color:#6b6968; margin-top:12px; }
+  dd { margin:2px 0 0; font-weight:600; word-break:break-word; }
+  .success { text-align:center; }
+  .success .icon { width:64px; height:64px; border-radius:50%; background:var(--accent); color:var(--dark); font-size:36px; line-height:64px; margin:0 auto 16px; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+<header>POSITIVO <span>+</span> Service Desk</header>
+<main>
+
+  <!-- 1. Formulário -->
+  <section class="card" id="step-form">
+    <h1>Solicitação de acesso a sistema</h1>
+    <p class="sub">Seus dados já foram preenchidos pelo login</p>
+    <form id="form" novalidate>
+      <div class="field">
+        <label class="lbl" for="sistema">Sistema<span class="req" aria-hidden="true">*</span></label>
+        <select id="sistema" required>
+          <option value="SEI">SEI</option>
+          <option value="SIGEPE">SIGEPE</option>
+          <option value="GLPI">GLPI</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <span class="lbl" id="tipo-lbl">Tipo de acesso<span class="req" aria-hidden="true">*</span></span>
+        <div class="checks" role="group" aria-labelledby="tipo-lbl">
+          <label><input type="checkbox" name="tipo" value="Leitura"> Leitura</label>
+          <label><input type="checkbox" name="tipo" value="Escrita"> Escrita</label>
+        </div>
+        <div class="error" id="err-tipo" role="alert"></div>
+      </div>
+
+      <div class="field hidden" id="just-field">
+        <label class="lbl" for="justificativa">Justificativa<span class="req" aria-hidden="true">*</span></label>
+        <textarea id="justificativa" maxlength="20" aria-describedby="counter"></textarea>
+        <div class="counter" id="counter">0/20</div>
+        <div class="error" id="err-just" role="alert"></div>
+      </div>
+
+      <div class="actions"><button type="submit" class="primary">Revisar</button></div>
+    </form>
+  </section>
+
+  <!-- 2. Resumo -->
+  <section class="card hidden" id="step-summary">
+    <h1>Resumo da solicitação</h1>
+    <p class="sub">Confira os dados antes de abrir o chamado</p>
+    <dl id="summary"></dl>
+    <div class="actions">
+      <button type="button" class="secondary" id="btn-back">Voltar e editar</button>
+      <button type="button" class="primary" id="btn-open">Abrir chamado</button>
+    </div>
+  </section>
+
+  <!-- 3. Sucesso -->
+  <section class="card hidden success" id="step-done" aria-live="polite">
+    <div class="icon">✓</div>
+    <h1 id="done-msg"></h1>
+    <p class="sub">Acompanhe o andamento pelo GLPI.</p>
+    <div class="actions" style="justify-content:center"><button type="button" class="secondary" id="btn-new">Nova solicitação</button></div>
+  </section>
+
+</main>
+<script>
+(function () {
+  // Dados de exemplo embutidos (substitua pelo conteúdo de usuario-logado.json / resposta-api-exemplo.json).
+  // Nenhuma API é chamada: a criação do chamado é simulada com a resposta de exemplo.
+  var USUARIO_LOGADO = { id: 1, nome: "Usuário Exemplo", login: "usuario.exemplo", email: "usuario.exemplo@positivo.com.br" };
+  var RESPOSTA_API = { id: 42, date_creation: new Date().toISOString() };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var MAX = 20;
+  var steps = { form: $("step-form"), summary: $("step-summary"), done: $("step-done") };
+  var sistema = $("sistema"), just = $("justificativa"), counter = $("counter");
+  var checks = Array.prototype.slice.call(document.querySelectorAll('input[name="tipo"]'));
+
+  function show(name) {
+    Object.keys(steps).forEach(function (k) { steps[k].classList.toggle("hidden", k !== name); });
+    window.scrollTo(0, 0);
+  }
+  function tipo() { var c = checks.filter(function (x) { return x.checked; })[0]; return c ? c.value : ""; }
+
+  function updateCounter() {
+    var n = just.value.length;
+    counter.textContent = n + "/" + MAX;
+    counter.classList.toggle("full", n >= MAX);
+    just.classList.toggle("full", n >= MAX);
+  }
+  function updateTipo() {
+    $("just-field").classList.toggle("hidden", tipo() !== "Escrita");
+    $("err-tipo").textContent = "";
+    $("err-just").textContent = "";
+  }
+
+  // Checkbox com seleção única
+  checks.forEach(function (c) {
+    c.addEventListener("change", function () {
+      if (c.checked) checks.forEach(function (o) { if (o !== c) o.checked = false; });
+      updateTipo();
+    });
+  });
+  just.addEventListener("input", updateCounter);
+
+  function validate() {
+    var ok = true;
+    $("err-tipo").textContent = ""; $("err-just").textContent = "";
+    if (!tipo()) { $("err-tipo").textContent = "Selecione o tipo de acesso."; ok = false; }
+    if (tipo() === "Escrita" && !just.value.trim()) {
+      $("err-just").textContent = "A justificativa é obrigatória para acesso de escrita."; ok = false;
+    }
+    return ok;
+  }
+
+  function addRow(dl, term, value) {
+    var dt = document.createElement("dt"), dd = document.createElement("dd");
+    dt.textContent = term; dd.textContent = value;
+    dl.appendChild(dt); dl.appendChild(dd);
+  }
+
+  $("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!validate()) return;
+    var dl = $("summary"); dl.innerHTML = "";
+    var u = USUARIO_LOGADO;
+    addRow(dl, "Solicitante", (u.nome || u.name || u.login || "") + (u.email ? " <" + u.email + ">" : ""));
+    addRow(dl, "Sistema", sistema.value);
+    addRow(dl, "Tipo de acesso", tipo());
+    if (tipo() === "Escrita") addRow(dl, "Justificativa", just.value.trim());
+    show("summary");
+  });
+
+  $("btn-back").addEventListener("click", function () { show("form"); }); // estado do formulário preservado
+
+  function numeroChamado(r) {
+    var d = (r && r.data) || r || {};
+    var id = d.id || d.ticket_id || d.ticketId || (r && (r.id || r.ticket_id)) || 0;
+    var dt = new Date(d.date_creation || d.date || d.created_at || Date.now());
+    var ano = isNaN(dt) ? new Date().getFullYear() : dt.getFullYear();
+    return ano + "-" + String(id).replace(/\D/g, "").padStart(5, "0");
+  }
+
+  $("btn-open").addEventListener("click", function () {
+    $("done-msg").textContent = "Chamado #" + numeroChamado(RESPOSTA_API) + " aberto com sucesso";
+    show("done");
+  });
+
+  $("btn-new").addEventListener("click", function () {
+    $("form").reset(); updateTipo(); updateCounter(); show("form");
+  });
+
+  updateTipo(); updateCounter();
+})();
+</script>
+</body>
+</html>
