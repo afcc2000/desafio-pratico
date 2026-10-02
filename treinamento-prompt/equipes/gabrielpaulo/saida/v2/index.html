@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acesso a Sistemas corporativos – Demo GLPI</title>
+<style>
+  :root {
+    --base: #2C2A29;
+    --accent: #3CDBC0;
+    --ok: #1fa34a;
+    --err: #e5484d;
+    --bg: #f4f5f5;
+    --line: #d9dcdc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--base);
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    display: flex; flex-direction: column; align-items: center; padding: 32px 16px;
+  }
+  .card {
+    width: 100%; max-width: 560px; background: #fff; border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(44,42,41,.15); overflow: hidden;
+  }
+  header { background: var(--base); color: #fff; padding: 24px 28px; border-bottom: 4px solid var(--accent); }
+  header .brand { color: var(--accent); font-weight: 700; letter-spacing: .5px; font-size: 13px; text-transform: uppercase; margin-bottom: 8px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header p { margin: 0; color: #cfcfcf; font-size: 14px; }
+  form { padding: 24px 28px 28px; }
+  fieldset { border: 0; padding: 0; margin: 0 0 20px; }
+  legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--base); padding: 0 0 10px; }
+  .field { margin-bottom: 16px; }
+  label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; font: inherit; color: var(--base);
+    border: 1.5px solid var(--line); border-radius: 8px; background: #fff;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(60,219,192,.3); }
+  input[readonly] { background: #eceeee; color: #555; cursor: not-allowed; }
+  textarea { resize: vertical; min-height: 96px; }
+  .invalid { border-color: var(--err) !important; }
+  .error { color: var(--err); font-size: 12px; margin-top: 4px; min-height: 0; }
+  #grp-just[hidden] { display: none; }
+  .counter { font-size: 12px; font-weight: 700; margin-top: 4px; text-align: right; color: var(--err); transition: color .3s ease; }
+  .counter.ok { color: var(--ok); }
+  textarea { transition: border-color .3s ease, box-shadow .3s ease; }
+  textarea.cnt-bad { border-color: var(--err); }
+  textarea.cnt-ok { border-color: var(--ok); }
+  button {
+    width: 100%; padding: 12px; border: 0; border-radius: 8px; cursor: pointer;
+    background: var(--accent); color: var(--base); font-size: 16px; font-weight: 700;
+    transition: filter .2s;
+  }
+  button:hover:not(:disabled) { filter: brightness(.93); }
+  button:disabled { opacity: .6; cursor: wait; }
+  #alert {
+    display: none; margin-top: 16px; padding: 14px 16px; border-radius: 8px;
+    background: #e8fbf7; border-left: 5px solid var(--accent); font-weight: 600;
+  }
+  #alert.show { display: block; }
+  #alert.fail { background: #fdecec; border-left-color: var(--err); }
+  footer { margin-top: 16px; font-size: 12px; color: #777; text-align: center; }
+</style>
+</head>
+<body>
+<div class="card">
+  <header>
+    <div class="brand">Positivo S+ · Service Desk</div>
+    <h1>Acesso a Sistemas corporativos</h1>
+    <p>Seus dados já foram preenchidos pelo login</p>
+  </header>
+
+  <form id="form" novalidate>
+    <fieldset>
+      <legend>Dados do Solicitante</legend>
+      <div class="field">
+        <label for="nome">Nome</label>
+        <input id="nome" type="text" readonly aria-readonly="true" tabindex="-1">
+      </div>
+      <div class="field">
+        <label for="matricula">Matrícula</label>
+        <input id="matricula" type="text" readonly aria-readonly="true" tabindex="-1">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Solicitação</legend>
+      <div class="field">
+        <label for="sistema">Sistema</label>
+        <select id="sistema" required>
+          <option value="">Selecione…</option>
+          <option value="SEI">SEI</option>
+          <option value="SIGEPE">SIGEPE</option>
+          <option value="GLPI">GLPI</option>
+        </select>
+        <div class="error" id="err-sistema"></div>
+      </div>
+      <div class="field">
+        <label for="tipo">Tipo de Acesso</label>
+        <select id="tipo" required>
+          <option value="">Selecione…</option>
+          <option value="Leitura">Leitura</option>
+          <option value="Escrita">Escrita</option>
+        </select>
+        <div class="error" id="err-tipo"></div>
+      </div>
+      <div class="field" id="grp-just" hidden>
+        <label for="justificativa">Justificativa</label>
+        <textarea id="justificativa" class="cnt-bad" placeholder="Descreva o motivo (mín. 20 caracteres)"></textarea>
+        <div class="counter" id="contador" aria-live="polite">0/20</div>
+        <div class="error" id="err-just"></div>
+      </div>
+    </fieldset>
+
+    <button type="submit" id="enviar">Abrir chamado</button>
+    <div id="alert" role="alert"></div>
+  </form>
+</div>
+<footer>Página de homologação — nenhuma chamada real de API é realizada.</footer>
+
+<!-- Mock de sessão (substituir pelo conteúdo de usuario-logado.json). Valores fictícios. -->
+<script id="mock-usuario" type="application/json">
+{ "nome": "Usuário Demonstração", "matricula": "000000" }
+</script>
+<!-- Mock da resposta do MCP (substituir pelo mock de formulario-exportado.json). -->
+<script id="mock-mcp" type="application/json">
+{ "status": "ok", "ticket_id": 1 }
+</script>
+
+<script>
+(function () {
+  var MIN = 20;
+  var $ = function (id) { return document.getElementById(id); };
+  var usuario = JSON.parse($('mock-usuario').textContent);
+  $('nome').value = usuario.nome;
+  $('matricula').value = usuario.matricula;
+
+  var tipo = $('tipo'), grp = $('grp-just'), just = $('justificativa'), cont = $('contador');
+
+  function atualizaContador() {
+    var n = just.value.length, ok = n >= MIN;
+    cont.textContent = n + '/' + MIN;
+    cont.classList.toggle('ok', ok);
+    just.classList.toggle('cnt-ok', ok);
+    just.classList.toggle('cnt-bad', !ok);
+    if (ok) { $('err-just').textContent = ''; just.classList.remove('invalid'); }
+  }
+
+  function atualizaCondicional() {
+    var escrita = tipo.value === 'Escrita';
+    grp.hidden = !escrita;
+    if (!escrita) { just.value = ''; $('err-just').textContent = ''; just.classList.remove('invalid'); }
+    atualizaContador();
+  }
+
+  tipo.addEventListener('change', atualizaCondicional);
+  just.addEventListener('input', atualizaContador);
+  ['sistema', 'tipo'].forEach(function (id) {
+    $(id).addEventListener('change', function () {
+      $('err-' + id).textContent = ''; $(id).classList.remove('invalid');
+    });
+  });
+
+  function erro(campo, msg) {
+    $(campo.err).textContent = msg; $(campo.el).classList.add('invalid');
+  }
+
+  function valida() {
+    var ok = true;
+    if (!$('sistema').value) { erro({ err: 'err-sistema', el: 'sistema' }, 'Selecione o sistema.'); ok = false; }
+    if (!tipo.value) { erro({ err: 'err-tipo', el: 'tipo' }, 'Selecione o tipo de acesso.'); ok = false; }
+    if (tipo.value === 'Escrita' && just.value.length < MIN) {
+      erro({ err: 'err-just', el: 'justificativa' }, 'A justificativa deve ter no mínimo ' + MIN + ' caracteres.');
+      ok = false;
+    }
+    return ok;
+  }
+
+  // Simula a resposta do MCP (sem rede)
+  function simulaMcp(payload) {
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        var mock = JSON.parse($('mock-mcp').textContent);
+        var id = Math.floor(Math.random() * 99999) + 1; // 1..99999
+        resolve({ status: mock.status, ticket_id: id, payload: payload });
+      }, 600);
+    });
+  }
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var al = $('alert');
+    al.className = '';
+    if (!valida()) return;
+    var btn = $('enviar');
+    btn.disabled = true;
+    var payload = {
+      solicitante: usuario,
+      sistema: $('sistema').value,
+      tipo_acesso: tipo.value
+    };
+    if (tipo.value === 'Escrita') payload.justificativa = just.value;
+    simulaMcp(payload).then(function (res) {
+      btn.disabled = false;
+      if (res.status !== 'ok') {
+        al.textContent = 'Falha ao abrir o chamado.';
+        al.className = 'show fail';
+        return;
+      }
+      var ano = new Date().getFullYear();
+      var num = String(res.ticket_id).padStart(5, '0');
+      var msg = 'Chamado #' + ano + '-' + num + ' aberto com sucesso';
+      al.textContent = msg;
+      al.className = 'show';
+      window.alert(msg);
+    });
+  });
+
+  atualizaCondicional();
+})();
+</script>
+</body>
+</html>

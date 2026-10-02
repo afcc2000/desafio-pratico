@@ -1,0 +1,16 @@
+{
+  "equipe": "gabrielpaulo",
+  "versao": "v2",
+  "executado_em": "2026-10-02T19:53:14+00:00",
+  "duracao_s": 37.5,
+  "caracteres_prompt": 1679,
+  "sha256_prompt": "22dbc6c27ca194c5de294d0f1d9ba357dfe33363c7b6f051ba78c15e6c2b983a",
+  "gerou_html": true,
+  "briefing_colado_pct": 0,
+  "custo_usd": 0.27828539999999996,
+  "modelos": [
+    "claude-sonnet-5-5"
+  ],
+  "sessao": "ba32f15d-1334-441d-8e92-a5212216c802",
+  "resposta_final": "Criei o `index.html` em `C:\\Users\\Gabriel\\AppData\\Local\\Temp\\desafio-qqbsqdim\\`, mas **não o testei** e **não o validei contra o `contrato-qa.md`**. A leitura dos três arquivos de referência foi negada, então fiz a página só com o seu enunciado.\n\n**Dados que você precisa trocar**\n- **Sessão:** Nome e Matrícula vêm de um mock fictício (\"Usuário Demonstração\", \"000000\"). Substitua o conteúdo do bloco `<script id=\"mock-usuario\">` pelo de `usuario-logado.json`.\n- **Resposta do MCP:** o bloco `<script id=\"mock-mcp\">` é um placeholder. O ID do chamado é sorteado entre 1 e 99999. Troque pelo mock de `formulario-exportado.json` se ele definir o ID.\n- **Critérios de QA:** não sei o que o `contrato-qa.md` exige, então compare a página com ele antes de homologar. Se os campos do JSON exportado tiverem nomes ou opções diferentes das do enunciado, ajuste também.\n\n**O que a página faz, conforme o enunciado**\n- **Cabeçalho:** título \"Acesso a Sistemas corporativos\" e subtítulo \"Seus dados já foram preenchidos pelo login\".\n- **Solicitante:** Nome e Matrícula aparecem preenchidos e bloqueados (somente leitura).\n- **Seleções:** Sistema (SEI, SIGEPE, GLPI) e Tipo de Acesso (Leitura, Escrita).\n- **Justificativa:** só aparece quando o tipo é Escrita. O contador começa em `0/20` e a cor passa de vermelho para verde com transição ao chegar a 20 caracteres. Abaixo disso o envio é bloqueado, e ao trocar para Leitura o campo some e é limpo.\n- **Envio:** valida os campos e simula a resposta do MCP sem nenhuma chamada de rede. Mostra \"Chamado #AAAA-NNNNN aberto com sucesso\" no painel da página e em um `alert()`. O ano é o corrente e o ID tem 5 dígitos com zeros à esquerda.\n- **Design:** usa as cores #2C2A29 e #3CDBC0. O texto \"Positivo S+\" no cabeçalho é só texto, sem logo."
+}
