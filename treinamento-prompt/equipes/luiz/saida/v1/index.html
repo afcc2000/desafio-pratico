@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estella · Painel de Setembro</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100vw;height:100vh;overflow:hidden;background:#2C2A29;color:#F2F0EE;font-family:"Segoe UI",Arial,sans-serif}
+body{display:flex;flex-direction:column;padding:1.6vh 1.6vw;gap:1.8vh;font-size:clamp(11px,1.9vh,22px)}
+#alerta-transbordo{flex:none;background:#E5484D;color:#fff;font-weight:700;text-align:center;padding:1vh 1vw;border-radius:6px;font-size:2.2vh}
+header{flex:none;display:flex;justify-content:space-between;align-items:center;gap:2vw}
+h1{font-size:4vh;font-weight:700;white-space:nowrap}
+h1 span{color:#3CDBC0}
+#atualizado{font-size:2.2vh;color:#B8B4B0;white-space:nowrap}
+.cards{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4vw}
+.card{background:#383534;border-radius:10px;padding:1.8vh 1.4vw;border-top:.5vh solid #3CDBC0}
+.card.tb{border-top-color:#FF6B6B}
+.card .rot{font-size:2.1vh;color:#B8B4B0}
+.card .val{font-size:6.4vh;font-weight:700;line-height:1.15}
+.card .pct{font-size:2.3vh;color:#3CDBC0;height:3vh}
+.card.tb .pct{color:#FF6B6B}
+.main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1.15fr;gap:1.4vw}
+.panel{background:#383534;border-radius:10px;padding:1.8vh 1.4vw;display:flex;flex-direction:column;min-height:0;min-width:0}
+.panel h2{flex:none;font-size:2.6vh;margin-bottom:1.4vh;font-weight:600}
+#grafico-orgaos{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around}
+.linha{display:grid;grid-template-columns:7ch 1fr;align-items:center;gap:.8vw}
+.sigla{font-weight:600;font-size:2.3vh}
+.trilho{display:flex;align-items:center;gap:.8vw}
+.barra{height:4.2vh;border-radius:4px;background:#3CDBC0;min-width:2px}
+.barra.ufba{background:#FF8A4C}
+.v{font-size:2.3vh;font-weight:700;white-space:nowrap}
+.tabwrap{flex:1;min-height:0}
+table{width:100%;border-collapse:collapse;font-size:2.2vh}
+th{text-align:left;color:#B8B4B0;font-weight:600;padding:1vh .6vw;border-bottom:1px solid #55514f}
+td{padding:1.5vh .6vw;border-bottom:1px solid #46423f;overflow:hidden;text-overflow:ellipsis}
+td.st{font-weight:700;white-space:nowrap}
+.s-resolvido{color:#3CDBC0}.s-transbordo{color:#FF6B6B}.s-em_andamento{color:#F2C94C}
+</style>
+</head>
+<body>
+<div id="alerta-transbordo" data-testid="alerta-transbordo" hidden>Transbordo acima da meta de 20%</div>
+<header>
+  <h1 data-testid="titulo">Estella · Painel de Setembro</h1>
+  <div id="atualizado" data-testid="atualizado">Atualizado em 30/09/2026 18:00</div>
+</header>
+<section class="cards">
+  <div class="card" data-testid="card-atendimentos"><div class="rot">Atendimentos</div><div class="val" id="v-at"></div><div class="pct"></div></div>
+  <div class="card" data-testid="card-resolvidos"><div class="rot">Resolvidos pela Estella</div><div class="val" id="v-re"></div><div class="pct" id="p-re"></div></div>
+  <div class="card tb" data-testid="card-transbordo"><div class="rot">Transbordo para humano</div><div class="val" id="v-tb"></div><div class="pct" id="p-tb"></div></div>
+</section>
+<section class="main">
+  <div class="panel">
+    <h2>Top 5 órgãos por atendimentos</h2>
+    <div id="grafico-orgaos" data-testid="grafico-orgaos"></div>
+  </div>
+  <div class="panel">
+    <h2>Últimas conversas</h2>
+    <div class="tabwrap">
+      <table data-testid="tabela-conversas">
+        <thead><tr><th>Hora</th><th>Órgão</th><th>Assunto</th><th>Status</th></tr></thead>
+        <tbody id="corpo"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<script>
+var orgaos=[["UFBA",2870,2239,631],["DPU",760,593,167],["IPHAN",540,421,119],["MJ",1320,1030,290],["CNPq",3920,3057,863],["ANTAQ",330,257,73],["CAPES",1960,1529,431],["DNIT",2410,1880,530],["MIDR",980,764,216]];
+var conversas=[["17:37","CAPES","Acesso à Plataforma Sucupira","resolvido"],["17:44","DNIT","Recurso de multa","transbordo"],["16:40","IPHAN","Consulta de tombamento","resolvido"],["17:51","UFBA","Trancamento de matrícula","em_andamento"],["16:55","DPU","Agendamento de atendimento","em_andamento"],["17:58","CNPq","Bolsa de produtividade","resolvido"],["17:30","MJ","Emissão de certidão","transbordo"],["17:12","MIDR","Status de convênio","resolvido"]];
+var rotulo={resolvido:"Resolvido",transbordo:"Transbordo",em_andamento:"Em andamento"};
+var nf=new Intl.NumberFormat("pt-BR");
+function pct(x){return x.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"%"}
+var at=0,re=0,tb=0;
+orgaos.forEach(function(o){at+=o[1];re+=o[2];tb+=o[3]});
+document.getElementById("v-at").textContent=nf.format(at);
+document.getElementById("v-re").textContent=nf.format(re);
+document.getElementById("v-tb").textContent=nf.format(tb);
+document.getElementById("p-re").textContent=pct(re/at*100)+" do total";
+document.getElementById("p-tb").textContent=pct(tb/at*100)+" do total";
+if(tb/at>0.2)document.getElementById("alerta-transbordo").hidden=false;
+var top=orgaos.slice().sort(function(a,b){return b[1]-a[1]}).slice(0,5),max=top[0][1],g=document.getElementById("grafico-orgaos");
+top.forEach(function(o){
+  var l=document.createElement("div");l.className="linha";
+  l.innerHTML='<span class="sigla">'+o[0]+'</span><div class="trilho"><div class="barra'+(o[0]==="UFBA"?" ufba":"")+'" data-testid="barra-'+o[0].toLowerCase()+'" style="width:calc((100% - 9ch) * '+(o[1]/max)+')"></div><span class="v">'+nf.format(o[1])+'</span></div>';
+  g.appendChild(l);
+});
+var c=document.getElementById("corpo");
+conversas.slice().sort(function(a,b){return a[0]<b[0]?1:-1}).slice(0,5).forEach(function(r){
+  var tr=document.createElement("tr");
+  tr.innerHTML='<td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td class="st s-'+r[3]+'" data-testid="status">'+rotulo[r[3]]+'</td>';
+  c.appendChild(tr);
+});
+</script>
+</body>
+</html>
