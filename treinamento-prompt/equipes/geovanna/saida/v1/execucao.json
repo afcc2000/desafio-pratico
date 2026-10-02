@@ -1,0 +1,16 @@
+{
+  "equipe": "geovanna",
+  "versao": "v1",
+  "executado_em": "2026-10-02T19:56:58+00:00",
+  "duracao_s": 67.1,
+  "caracteres_prompt": 1576,
+  "sha256_prompt": "7aad62d1246f501d5a21f96982d0b81f2aa255075cd48e35aae159b52e8cd580",
+  "gerou_html": true,
+  "briefing_colado_pct": 22,
+  "custo_usd": 0.21007720000000002,
+  "modelos": [
+    "claude-sonnet-5"
+  ],
+  "sessao": "40e6e6ed-127d-4658-81b9-cdf57f6f6a40",
+  "resposta_final": "Arquivo `index.html` criado com todos os requisitos: título/subtítulo, nome e matrícula travados (vêm do \"login\"), tipo de acesso em botões de opção (Leitura/Escrita, sem Administrador), justificativa obrigatória (mín. 10 caracteres) que só aparece em Escrita, contador \"0/20\" com destaque na cor da Positivo ao atingir 20, select com SEI/SIGEPE/GLPI nessa ordem, asteriscos vermelhos nos obrigatórios, alerta customizado (sem `alert()` nativo) para campos faltando, tela de resumo com \"Voltar e editar\" (preserva os dados) e \"Abrir chamado\", e mensagem final no padrão `Chamado #AAAA-NNNNN aberto com sucesso`. Cores da Positivo (#2C2A29 e #3CDBC0) aplicadas no cabeçalho, botões e destaques."
+}

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abertura de Chamado - GLPI</title>
+<style>
+  :root{
+    --cor-escura:#2C2A29;
+    --cor-destaque:#3CDBC0;
+    --cinza-claro:#f4f4f4;
+    --cinza-borda:#d9d9d9;
+    --vermelho:#e3342f;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:Segoe UI, Arial, sans-serif;
+    background:var(--cinza-claro);
+    color:var(--cor-escura);
+    display:flex;
+    justify-content:center;
+    padding:30px 15px;
+  }
+
+  .card{
+    background:#fff;
+    width:100%;
+    max-width:620px;
+    border-radius:10px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.12);
+    overflow:hidden;
+  }
+
+  .card-header{
+    background:var(--cor-escura);
+    color:#fff;
+    padding:22px 28px;
+    border-bottom:4px solid var(--cor-destaque);
+  }
+
+  .card-header h1{
+    margin:0 0 6px 0;
+    font-size:22px;
+  }
+
+  .card-header p{
+    margin:0;
+    font-size:14px;
+    color:var(--cor-destaque);
+  }
+
+  .card-body{
+    padding:26px 28px 30px 28px;
+  }
+
+  .campo{
+    margin-bottom:20px;
+  }
+
+  label{
+    display:block;
+    font-weight:600;
+    font-size:14px;
+    margin-bottom:6px;
+    color:var(--cor-escura);
+  }
+
+  .obrigatorio{
+    color:var(--vermelho);
+    margin-left:3px;
+  }
+
+  input[type="text"], select, textarea{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--cinza-borda);
+    border-radius:6px;
+    font-size:14px;
+    font-family:inherit;
+    background:#fff;
+    color:var(--cor-escura);
+  }
+
+  input[disabled]{
+    background:#eeeeee;
+    color:#6b6b6b;
+    cursor:not-allowed;
+  }
+
+  textarea{
+    resize:vertical;
+    min-height:90px;
+  }
+
+  .radio-group{
+    display:flex;
+    gap:22px;
+    padding:4px 0;
+  }
+
+  .radio-option{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:14px;
+    cursor:pointer;
+  }
+
+  .radio-option input{
+    width:16px;
+    height:16px;
+    cursor:pointer;
+  }
+
+  .contador{
+    text-align:right;
+    font-size:12px;
+    margin-top:5px;
+    color:#888;
+    font-weight:600;
+  }
+
+  .contador.cheio{
+    color:#1f9c86;
+  }
+
+  .alert-box{
+    display:none;
+    background:#fdecea;
+    border:1px solid var(--vermelho);
+    color:#8a1f1a;
+    padding:12px 16px;
+    border-radius:6px;
+    font-size:13px;
+    margin-bottom:18px;
+  }
+
+  .alert-box ul{
+    margin:6px 0 0 18px;
+    padding:0;
+  }
+
+  .botoes{
+    display:flex;
+    gap:12px;
+    margin-top:10px;
+  }
+
+  button{
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+    padding:12px 18px;
+    font-size:14px;
+    font-weight:600;
+    font-family:inherit;
+  }
+
+  .btn-primario{
+    background:var(--cor-destaque);
+    color:var(--cor-escura);
+    flex:1;
+  }
+
+  .btn-primario:hover{
+    background:#2cc3ab;
+  }
+
+  .btn-secundario{
+    background:#fff;
+    color:var(--cor-escura);
+    border:1px solid var(--cor-escura);
+    flex:1;
+  }
+
+  .btn-secundario:hover{
+    background:#f0f0f0;
+  }
+
+  .resumo-item{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--cinza-borda);
+    font-size:14px;
+  }
+
+  .resumo-item span:first-child{
+    font-weight:600;
+    color:var(--cor-escura);
+  }
+
+  .resumo-item span:last-child{
+    text-align:right;
+    max-width:60%;
+    word-break:break-word;
+  }
+
+  .resumo-justificativa{
+    display:block;
+    margin-top:14px;
+  }
+
+  .resumo-justificativa strong{
+    display:block;
+    margin-bottom:6px;
+    font-size:14px;
+  }
+
+  .resumo-justificativa p{
+    margin:0;
+    font-size:14px;
+    background:var(--cinza-claro);
+    padding:12px;
+    border-radius:6px;
+    white-space:pre-wrap;
+  }
+
+  .tela{
+    display:none;
+  }
+
+  .tela.ativa{
+    display:block;
+  }
+
+  .sucesso{
+    text-align:center;
+    padding:20px 0;
+  }
+
+  .sucesso .icone{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:var(--cor-destaque);
+    color:var(--cor-escura);
+    font-size:32px;
+    line-height:60px;
+    margin:0 auto 18px auto;
+    font-weight:bold;
+  }
+
+  .sucesso h2{
+    margin:0 0 10px 0;
+    font-size:18px;
+  }
+
+  .sucesso p{
+    color:#555;
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <h1 id="tituloFormulario">Abertura de Chamado - Solicitação de Acesso</h1>
+    <p>Seus dados já foram preenchidos pelo login</p>
+  </div>
+
+  <div class="card-body">
+
+    <!-- TELA 1: FORMULARIO -->
+    <div id="telaFormulario" class="tela ativa">
+
+      <div id="caixaAlerta" class="alert-box"></div>
+
+      <div class="campo">
+        <label>Nome</label>
+        <input type="text" id="campoNome" disabled>
+      </div>
+
+      <div class="campo">
+        <label>Matrícula</label>
+        <input type="text" id="campoMatricula" disabled>
+      </div>
+
+      <div class="campo">
+        <label for="campoSistema">Sistema<span class="obrigatorio">*</span></label>
+        <select id="campoSistema">
+          <option value="">Selecione...</option>
+          <option value="SEI">SEI</option>
+          <option value="SIGEPE">SIGEPE</option>
+          <option value="GLPI">GLPI</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Tipo de Acesso<span class="obrigatorio">*</span></label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="tipoAcesso" value="Leitura">
+            Leitura
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="tipoAcesso" value="Escrita">
+            Escrita
+          </label>
+        </div>
+      </div>
+
+      <div class="campo" id="blocoJustificativa" style="display:none;">
+        <label for="campoJustificativa">Justificativa<span class="obrigatorio">*</span></label>
+        <textarea id="campoJustificativa" maxlength="500" placeholder="Descreva o motivo da solicitação (mínimo de 10 caracteres)"></textarea>
+        <div class="contador" id="contadorJustificativa">0/20</div>
+      </div>
+
+      <div class="botoes">
+        <button type="button" class="btn-primario" style="flex:1;" id="btnContinuar">Continuar</button>
+      </div>
+
+    </div>
+
+    <!-- TELA 2: RESUMO -->
+    <div id="telaResumo" class="tela">
+      <h2 style="margin-top:0;font-size:16px;">Confira os dados antes de abrir o chamado</h2>
+
+      <div class="resumo-item">
+        <span>Nome</span>
+        <span id="resumoNome"></span>
+      </div>
+      <div class="resumo-item">
+        <span>Matrícula</span>
+        <span id="resumoMatricula"></span>
+      </div>
+      <div class="resumo-item">
+        <span>Sistema</span>
+        <span id="resumoSistema"></span>
+      </div>
+      <div class="resumo-item">
+        <span>Tipo de Acesso</span>
+        <span id="resumoTipoAcesso"></span>
+      </div>
+
+      <div class="resumo-justificativa" id="resumoBlocoJustificativa">
+        <strong>Justificativa</strong>
+        <p id="resumoJustificativa"></p>
+      </div>
+
+      <div class="botoes">
+        <button type="button" class="btn-secundario" id="btnVoltarEditar">Voltar e editar</button>
+        <button type="button" class="btn-primario" id="btnAbrirChamado">Abrir chamado</button>
+      </div>
+    </div>
+
+    <!-- TELA 3: SUCESSO -->
+    <div id="telaSucesso" class="tela">
+      <div class="sucesso">
+        <div class="icone">&#10003;</div>
+        <h2 id="mensagemSucesso"></h2>
+        <p>Você pode acompanhar o andamento do seu chamado pelo GLPI.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Dados simulados vindos do login (não editáveis)
+  const usuarioLogado = {
+    nome: "Carlos Eduardo Silva",
+    matricula: "482913"
+  };
+
+  document.getElementById('campoNome').value = usuarioLogado.nome;
+  document.getElementById('campoMatricula').value = usuarioLogado.matricula;
+
+  const telaFormulario = document.getElementById('telaFormulario');
+  const telaResumo = document.getElementById('telaResumo');
+  const telaSucesso = document.getElementById('telaSucesso');
+
+  const caixaAlerta = document.getElementById('caixaAlerta');
+  const blocoJustificativa = document.getElementById('blocoJustificativa');
+  const campoJustificativa = document.getElementById('campoJustificativa');
+  const contadorJustificativa = document.getElementById('contadorJustificativa');
+  const campoSistema = document.getElementById('campoSistema');
+
+  function trocarTela(tela){
+    [telaFormulario, telaResumo, telaSucesso].forEach(t => t.classList.remove('ativa'));
+    tela.classList.add('ativa');
+  }
+
+  function mostrarAlerta(mensagens){
+    caixaAlerta.innerHTML = '<strong>Não foi possível continuar. Verifique:</strong><ul>' +
+      mensagens.map(m => '<li>' + m + '</li>').join('') + '</ul>';
+    caixaAlerta.style.display = 'block';
+  }
+
+  function esconderAlerta(){
+    caixaAlerta.style.display = 'none';
+  }
+
+  function tipoAcessoSelecionado(){
+    const opcao = document.querySelector('input[name="tipoAcesso"]:checked');
+    return opcao ? opcao.value : '';
+  }
+
+  // Mostra/esconde justificativa conforme o tipo de acesso
+  document.querySelectorAll('input[name="tipoAcesso"]').forEach(radio => {
+    radio.addEventListener('change', function(){
+      if (this.value === 'Escrita'){
+        blocoJustificativa.style.display = 'block';
+      } else {
+        blocoJustificativa.style.display = 'none';
+      }
+    });
+  });
+
+  // Contador de caracteres da justificativa
+  campoJustificativa.addEventListener('input', function(){
+    const tamanho = this.value.length;
+    contadorJustificativa.textContent = tamanho + '/20';
+    if (tamanho >= 20){
+      contadorJustificativa.classList.add('cheio');
+    } else {
+      contadorJustificativa.classList.remove('cheio');
+    }
+  });
+
+  function validarFormulario(){
+    const erros = [];
+
+    if (!campoSistema.value){
+      erros.push('Selecione um sistema.');
+    }
+
+    const tipo = tipoAcessoSelecionado();
+    if (!tipo){
+      erros.push('Selecione o tipo de acesso.');
+    }
+
+    if (tipo === 'Escrita'){
+      const justificativa = campoJustificativa.value.trim();
+      if (justificativa.length < 10){
+        erros.push('Preencha a justificativa com pelo menos 10 caracteres.');
+      }
+    }
+
+    return erros;
+  }
+
+  document.getElementById('btnContinuar').addEventListener('click', function(){
+    const erros = validarFormulario();
+
+    if (erros.length > 0){
+      mostrarAlerta(erros);
+      return;
+    }
+
+    esconderAlerta();
+
+    const tipo = tipoAcessoSelecionado();
+
+    document.getElementById('resumoNome').textContent = usuarioLogado.nome;
+    document.getElementById('resumoMatricula').textContent = usuarioLogado.matricula;
+    document.getElementById('resumoSistema').textContent = campoSistema.value;
+    document.getElementById('resumoTipoAcesso').textContent = tipo;
+
+    const resumoBlocoJustificativa = document.getElementById('resumoBlocoJustificativa');
+    if (tipo === 'Escrita'){
+      resumoBlocoJustificativa.style.display = 'block';
+      document.getElementById('resumoJustificativa').textContent = campoJustificativa.value.trim();
+    } else {
+      resumoBlocoJustificativa.style.display = 'none';
+    }
+
+    trocarTela(telaResumo);
+  });
+
+  document.getElementById('btnVoltarEditar').addEventListener('click', function(){
+    trocarTela(telaFormulario);
+  });
+
+  document.getElementById('btnAbrirChamado').addEventListener('click', function(){
+    const ano = new Date().getFullYear();
+    const numero = String(Math.floor(Math.random() * 99999) + 1).padStart(5, '0');
+
+    document.getElementById('mensagemSucesso').textContent =
+      'Chamado #' + ano + '-' + numero + ' aberto com sucesso';
+
+    trocarTela(telaSucesso);
+  });
+</script>
+
+</body>
+</html>
