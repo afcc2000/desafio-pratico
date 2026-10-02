@@ -35,7 +35,7 @@ Se não houver `saida/v1/`, a equipe ainda não executou. Informe e pare.
 1. `execucao.json` existe. Sem ele, o HTML não veio do `executar.py`.
 2. `sha256_prompt` = SHA-256 do `prompts/v1.md` **exatamente como está no arquivo**, sem strip: `python -c "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],encoding='utf-8').read().encode()).hexdigest())" <v1.md>`.
 3. O prompt tem no máximo 2.000 caracteres depois do strip (confira com `caracteres_prompt`).
-4. `modelos` contém apenas modelos Haiku.
+4. `modelos` contém apenas o modelo definido em `MODELO` no `treinamento-prompt/executar.py` (hoje Sonnet).
 5. Ordem no histórico, com `git -C "$WT" log --format='%h %ad %s' --date=iso -- treinamento-prompt/equipes/<nome>`: o prompt foi commitado antes do commit `<nome>: saída v1`.
 6. Nenhum commit depois de `<nome>: saída v1` altera `saida/` ou `prompts/v1.md`. Para conferir: `git -C "$WT" log <commit-saida>..HEAD --name-only -- treinamento-prompt/equipes/<nome>`.
 

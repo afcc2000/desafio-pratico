@@ -31,9 +31,9 @@ Fluxo: cada pessoa ou dupla cria uma branch `equipe/<nome>`, escreve **um** prom
 - **Commit antes de rodar.** O script recusa o prompt que não foi commitado. O histórico prova que o prompt veio antes da saída.
 - **Pasta isolada.** O Claude Code roda numa pasta temporária vazia e não vê o material do cliente nem o repositório.
 - **Limite de 2.000 caracteres** no prompt. O material inteiro tem mais de 5.000, então não dá para colar tudo.
-- **Mesmo modelo para todos: Haiku.** É menor, como se usaria em produção por custo, e não adivinha o que o prompt deixou de dizer.
+- **Mesmo modelo para todos: Sonnet.** (Configurado em `MODELO` no `treinamento-prompt/executar.py`.)
 
-### Por que o limite e o Haiku
+### Por que o limite (testes feitos com o Haiku)
 
 Nos testes, colar o material inteiro num modelo grande dava 15/15. A tarefa virava copiar e colar. Com o Haiku e o limite, os resultados foram estes:
 
@@ -114,6 +114,6 @@ Uma observação boa para o debrief: nos testes, os prompts colados fizeram o mo
 
 ## 7. Custos e requisitos
 
-- Cada execução com o Haiku custou entre US$ 0,04 e US$ 0,10 nos testes e levou de 30 a 70 segundos. Ela usa a conta do Claude Code de cada pessoa.
+- Cada execução usa a conta (assinatura) do Claude Code de cada pessoa e leva por volta de 1 minuto. Com o Haiku, a estimativa de custo era de US$ 0,04 a 0,10; com o Sonnet, espere cerca de 3 vezes isso.
 - Requisitos por pessoa: Python 3.10+, Git, Claude Code instalado e logado, e acesso de escrita ao repositório.
 - No Windows, se `python` não funcionar, use `py` (por exemplo, `py executar.py --verificar`).

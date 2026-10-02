@@ -26,8 +26,8 @@ RAIZ = Path(__file__).resolve().parent
 MARCADOR_MODELO = "APAGUE ESTA LINHA"
 TIMEOUT_S = 900
 LIMITE_CARACTERES = 2000
-# Modelo menor, como em produção por custo: ele não "adivinha" o que o prompt deixou de dizer.
-MODELO = "haiku"
+# Mesmo modelo para todas as equipes, para a comparação ser justa.
+MODELO = "sonnet"
 
 # Instrução fixa, igual para todas as equipes, acrescentada ao final do prompt.
 SUFIXO = (
@@ -39,7 +39,7 @@ SUFIXO = (
 
 # Flags do Claude Code em modo não interativo:
 #   -p                         executa um prompt e sai (sem chat)
-#   --model haiku              mesmo modelo para todas as equipes
+#   --model sonnet             mesmo modelo para todas as equipes
 #   --permission-mode acceptEdits  permite criar/editar arquivos sem pedir aprovação
 #   --tools Read,Write,Edit    só ferramentas de arquivo; sem terminal (Bash)
 #   --setting-sources project  ignora configurações pessoais (~/.claude); a pasta temporária não tem projeto

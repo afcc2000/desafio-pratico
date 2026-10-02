@@ -7,7 +7,7 @@ Um prompt, uma execução. O objetivo não é a tela; é o prompt.
 - Cada dupla escolhe **um** desafio: [A — Painel da Estella](desafios/A-painel-estella/LEIA-ME.md) ou [B — Tela de chamado no GLPI](desafios/B-chamado-glpi/LEIA-ME.md).
 - O prompt roda **uma única vez**, com o `executar.py`. Não existe conversa de correção.
 - O prompt tem no máximo **2.000 caracteres**. Colar todo o material não cabe: é preciso sintetizar o que vale.
-- Todas as equipes usam o mesmo modelo, o **Haiku**, um modelo menor, como em produção por custo. Ele não adivinha o que o prompt deixou de dizer.
+- Todas as equipes usam o mesmo modelo, o **Sonnet**. Ele não vê o material: o que o prompt não disser, ele vai adivinhar.
 - O material de cada desafio é o que o cliente mandou: e-mails com mudanças de ideia, planilhas e o contrato do QA. Transformar isso numa especificação clara é o seu trabalho.
 - O Claude Code roda numa **pasta vazia**: ele **não lê** esses arquivos nem este repositório. Tudo o que ele precisa saber tem que estar no seu prompt.
 - A nota é quantos dos **15 itens** do gabarito saíram certos nessa execução. O instrutor avalia cada branch depois do push.
