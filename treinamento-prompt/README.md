@@ -10,7 +10,7 @@ Um prompt, uma execução. O objetivo não é a tela; é o prompt.
 - Todas as equipes usam o mesmo modelo, o **Haiku**, um modelo menor, como em produção por custo. Ele não adivinha o que o prompt deixou de dizer.
 - O material de cada desafio é o que o cliente mandou: e-mails com mudanças de ideia, planilhas e o contrato do QA. Transformar isso numa especificação clara é o seu trabalho.
 - O Claude Code roda numa **pasta vazia**: ele **não lê** esses arquivos nem este repositório. Tudo o que ele precisa saber tem que estar no seu prompt.
-- A nota é quantos dos **15 itens** do gabarito saíram certos nessa execução. O gabarito só aparece na conferência.
+- A nota é quantos dos **15 itens** do gabarito saíram certos nessa execução. O instrutor avalia cada branch depois do push.
 
 ## Antes do treinamento (5 minutos)
 
@@ -18,8 +18,8 @@ Um prompt, uma execução. O objetivo não é a tela; é o prompt.
 2. Clone o repositório e teste o ambiente:
 
 ```powershell
-git clone <URL-DO-REPOSITORIO>
-cd treinamento-prompt
+git clone https://github.com/afcc2000/desafio-pratico.git
+cd desafio-pratico/treinamento-prompt
 python executar.py --verificar
 ```
 
@@ -38,20 +38,13 @@ git commit -m "ana-e-bruno: prompt v1"
 # 3. Execute uma única vez (a saída é salva e commitada sozinha)
 python executar.py ana-e-bruno v1
 
-# 4. Envie e abra um Pull Request para a main
+# 4. Envie a branch e avise o instrutor
 git push -u origin equipe/ana-e-bruno
 ```
 
 O resultado fica em `equipes/<nome>/saida/v1/index.html`. Abra no navegador para ver.
 
-## Rodada 2
-
-Depois da conferência:
-
-1. Peça uma crítica ao Claude Code (PACE) e escreva a nova versão em `prompts/v2.md`.
-2. Faça commit, rode `python executar.py <nome> v2` e dê `git push`.
-
-O avaliador compara a v1 com a v2 e mostra o que melhorou e o que **quebrou**.
+Depois do push, o instrutor avalia a sua branch contra o gabarito de 15 itens.
 
 ## Dicas de técnica
 
@@ -64,7 +57,7 @@ O avaliador compara a v1 com a v2 e mostra o que melhorou e o que **quebrou**.
 ## Perguntas frequentes
 
 **Errei o prompt e já rodei. Posso rodar de novo?**
-Não na mesma versão. Essa é a regra. Use a rodada 2.
+Não. Essa é a regra: um prompt, uma execução.
 
 **Posso colar trechos do material do cliente?**
 Pode, dentro do limite de 2.000 caracteres. Mas e-mail de cliente não é especificação: tem decisão antiga, sugestão descartada e dado que está só na planilha. O registro da execução mostra quanto do material foi colado literalmente.

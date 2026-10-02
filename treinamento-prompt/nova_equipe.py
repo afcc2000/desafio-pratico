@@ -55,7 +55,7 @@ Próximos passos:
   3. Escreva o prompt em equipes/{nome}/prompts/v1.md
   4. git add equipes/{nome} && git commit -m "{nome}: prompt v1"
   5. python executar.py {nome} v1
-  6. git push -u origin equipe/{nome}  e abra um Pull Request para a main
+  6. git push -u origin equipe/{nome}  e avise o instrutor
 """)
 
 
