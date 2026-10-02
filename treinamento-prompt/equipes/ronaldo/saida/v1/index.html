@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solicitação de acesso a sistema</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px 16px;background:#f4f6f6;color:#2C2A29;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.4}
+.card{max-width:560px;margin:0 auto;background:#fff;border-radius:12px;border-top:6px solid #3CDBC0;box-shadow:0 2px 12px rgba(44,42,41,.12);padding:28px}
+h1{margin:0 0 6px;font-size:1.5rem}
+.sub{margin:0 0 22px;color:#5b5856}
+.field{margin-bottom:18px}
+label,.legend{display:block;font-weight:600;margin-bottom:6px}
+.req{color:#D32F2F;margin-left:3px}
+input[type=text],select,textarea{width:100%;padding:10px 12px;font:inherit;color:#2C2A29;border:1px solid #b9b6b4;border-radius:6px;background:#fff}
+input[readonly]{background:#e6e6e6;color:#5b5856;cursor:not-allowed}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid #3CDBC0;outline-offset:1px}
+textarea{min-height:110px;resize:vertical}
+.radios{display:flex;gap:20px}
+.radios label{font-weight:400;display:flex;align-items:center;gap:6px;margin:0}
+.err{color:#D32F2F;font-size:.875rem;margin-top:5px}
+.err[hidden],[hidden]{display:none!important}
+.invalid{border-color:#D32F2F!important}
+.counter{font-size:.85rem;margin-top:4px;text-align:right;color:#5b5856}
+.counter.ok{color:#2E7D32;font-weight:600}
+button{font:inherit;font-weight:600;padding:11px 22px;border:2px solid #2C2A29;border-radius:6px;cursor:pointer;background:#2C2A29;color:#fff}
+button:hover{background:#000}
+button.sec{background:#fff;color:#2C2A29}
+button.sec:hover{background:#e9fbf8}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+dl{margin:0 0 18px}
+dt{font-weight:600;font-size:.85rem;color:#5b5856;margin-top:12px}
+dd{margin:2px 0 0;white-space:pre-wrap;word-break:break-word}
+.success{background:#e9fbf8;border-left:5px solid #3CDBC0;padding:14px;border-radius:6px;font-weight:600}
+@media(max-width:480px){.card{padding:20px}.actions button{width:100%}.radios{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+<main class="card">
+<section id="tela-form">
+<h1 data-testid="titulo">Solicitação de acesso a sistema</h1>
+<p class="sub" data-testid="subtitulo">Seus dados já foram preenchidos pelo login</p>
+<form id="form" novalidate>
+<div class="field"><label for="nome">Nome</label><input type="text" id="nome" data-testid="nome" readonly></div>
+<div class="field"><label for="matricula">Matrícula</label><input type="text" id="matricula" data-testid="matricula" readonly></div>
+<div class="field">
+<label for="sistema">Sistema<span class="req" data-testid="asterisco">*</span></label>
+<select id="sistema" data-testid="campo-sistema">
+<option value="">Selecione...</option><option value="SEI">SEI</option><option value="SIGEPE">SIGEPE</option><option value="GLPI">GLPI</option>
+</select>
+<div class="err" data-testid="erro-sistema" id="erro-sistema" hidden>Campo obrigatório</div>
+</div>
+<div class="field">
+<span class="legend">Tipo de acesso<span class="req" data-testid="asterisco">*</span></span>
+<div class="radios">
+<label><input type="radio" name="tipo" value="Leitura" data-testid="opcao-leitura"> Leitura</label>
+<label><input type="radio" name="tipo" value="Escrita" data-testid="opcao-escrita"> Escrita</label>
+</div>
+<div class="err" data-testid="erro-tipo" id="erro-tipo" hidden>Campo obrigatório</div>
+</div>
+<div class="field" id="grp-just" hidden>
+<label for="justificativa">Justificativa<span class="req" data-testid="asterisco">*</span></label>
+<textarea id="justificativa" data-testid="campo-justificativa"></textarea>
+<div class="counter" id="contador" data-testid="contador">0/20</div>
+<div class="err" data-testid="erro-justificativa" id="erro-justificativa" hidden>Campo obrigatório</div>
+</div>
+<div class="actions"><button type="submit" data-testid="btn-continuar">Continuar</button></div>
+</form>
+</section>
+
+<section id="tela-resumo" data-testid="resumo" hidden>
+<h1>Resumo da solicitação</h1>
+<dl>
+<dt>Nome</dt><dd id="r-nome"></dd>
+<dt>Matrícula</dt><dd id="r-matricula"></dd>
+<dt>Sistema</dt><dd id="r-sistema"></dd>
+<dt>Tipo</dt><dd id="r-tipo"></dd>
+<div id="r-just-grp" hidden><dt>Justificativa</dt><dd id="r-just"></dd></div>
+</dl>
+<div class="actions" id="resumo-botoes">
+<button type="button" class="sec" data-testid="btn-voltar" id="btn-voltar">Voltar e editar</button>
+<button type="button" data-testid="btn-abrir" id="btn-abrir">Abrir chamado</button>
+</div>
+<div class="success" data-testid="mensagem-sucesso" id="sucesso" role="status" hidden></div>
+</section>
+</main>
+<script>
+const user={"nome":"Marina Souza","matricula":"48213","glpi_id":4471,"email":"marina.souza@orgao.gov.br","lotacao":"Coordenação de Protocolo"};
+const response={"status":"created","ticket":{"id":412,"year":2026,"entity":"Órgão Exemplo","category":"Acesso a sistemas"}};
+const $=id=>document.getElementById(id);
+const sis=$('sistema'),just=$('justificativa'),grp=$('grp-just'),cont=$('contador');
+const radios=document.querySelectorAll('input[name=tipo]');
+$('nome').value=user.nome;$('matricula').value=user.matricula;
+const tipo=()=>{const r=document.querySelector('input[name=tipo]:checked');return r?r.value:''};
+const show=(id,v)=>{$(id).hidden=!v};
+function updCounter(){
+  const n=just.value.length;
+  cont.textContent=n+'/20';
+  cont.classList.toggle('ok',n>=20);
+}
+function vSistema(){const ok=!!sis.value;show('erro-sistema',!ok);sis.classList.toggle('invalid',!ok);return ok}
+function vTipo(){const ok=!!tipo();show('erro-tipo',!ok);return ok}
+function vJust(){
+  if(tipo()!=='Escrita'){show('erro-justificativa',false);just.classList.remove('invalid');return true}
+  const ok=just.value.trim().length>=20;
+  show('erro-justificativa',!ok);just.classList.toggle('invalid',!ok);return ok;
+}
+sis.addEventListener('change',()=>{if(sis.value)vSistema()});
+radios.forEach(r=>r.addEventListener('change',()=>{
+  grp.hidden=tipo()!=='Escrita';
+  if(tipo())show('erro-tipo',false);
+  if(grp.hidden){show('erro-justificativa',false);just.classList.remove('invalid')}
+}));
+just.addEventListener('input',()=>{
+  updCounter();
+  if(just.value.trim().length>=20){show('erro-justificativa',false);just.classList.remove('invalid')}
+});
+$('form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const a=vSistema(),b=vTipo(),c=vJust();
+  if(!(a&&b&&c))return;
+  $('r-nome').textContent=user.nome;
+  $('r-matricula').textContent=user.matricula;
+  $('r-sistema').textContent=sis.value;
+  $('r-tipo').textContent=tipo();
+  const esc=tipo()==='Escrita';
+  show('r-just-grp',esc);
+  $('r-just').textContent=esc?just.value.trim():'';
+  show('resumo-botoes',true);show('sucesso',false);
+  show('tela-form',false);show('tela-resumo',true);
+});
+$('btn-voltar').addEventListener('click',()=>{show('tela-resumo',false);show('tela-form',true)});
+$('btn-abrir').addEventListener('click',()=>{
+  const ticket=response.ticket;
+  $('sucesso').textContent=`Chamado #${ticket.year}-${String(ticket.id).padStart(5,'0')} aberto com sucesso`;
+  show('resumo-botoes',false);show('sucesso',true);
+});
+</script>
+</body>
+</html>
