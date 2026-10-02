@@ -1,0 +1,16 @@
+{
+  "equipe": "andre-cunha",
+  "versao": "v1",
+  "executado_em": "2026-10-02T16:49:31+00:00",
+  "duracao_s": 58.1,
+  "caracteres_prompt": 1834,
+  "sha256_prompt": "75305e5e6945492681d038b327c08034ab293a82a15d18818164419488e4b5b3",
+  "gerou_html": true,
+  "briefing_colado_pct": 0,
+  "custo_usd": 0.0999531,
+  "modelos": [
+    "claude-haiku-4-5-20251001"
+  ],
+  "sessao": "b4870dfe-f203-4142-98af-c03bc152568a",
+  "resposta_final": "Arquivo `index.html` criado com sucesso! A tela implementa:\n\n✓ Cabeçalho com título e subtítulo  \n✓ Dados do login (Marina Souza / 48213) readonly  \n✓ Formulário com sistema, tipo de acesso e justificativa (só aparece com Escrita)  \n✓ Validação em cascata (sistema → tipo → justificativa com mín. 20 chars)  \n✓ Erros aparecem/desaparecem dinamicamente  \n✓ Contador \"0/20\" cinza até 20, verde #2E7D32 com 20+  \n✓ Resumo mantém dados ao voltar e editar  \n✓ Mensagem final: \"Chamado #2026-00412 aberto com sucesso\"  \n✓ Design: fundo #2C2A29, cartão #F4F4F2, botões #3CDBC0"
+}
