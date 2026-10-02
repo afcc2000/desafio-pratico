@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acesso a Sistemas corporativos | Positivo S+ (Demo)</title>
+<style>
+  :root {
+    --base: #2C2A29;
+    --accent: #3CDBC0;
+    --bg: #f4f6f6;
+    --card: #ffffff;
+    --text: #2C2A29;
+    --muted: #6b6866;
+    --border: #d5d9d9;
+    --ok: #0f9d58;
+    --err: #d93025;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    background: var(--base);
+    color: #fff;
+    padding: 28px 20px 26px;
+    border-bottom: 4px solid var(--accent);
+  }
+  header .wrap { max-width: 640px; margin: 0 auto; }
+  .brand { color: var(--accent); font-weight: 700; letter-spacing: .5px; font-size: .85rem; margin-bottom: 8px; }
+  h1 { margin: 0 0 6px; font-size: 1.6rem; }
+  header p { margin: 0; color: #d6d4d3; }
+  main { max-width: 640px; margin: 24px auto; padding: 0 20px 40px; }
+  form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(44,42,41,.08);
+  }
+  fieldset { border: 0; padding: 0; margin: 0 0 20px; }
+  legend { font-weight: 700; padding: 0; margin-bottom: 12px; color: var(--base); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+  .field { margin-bottom: 16px; }
+  label { display: block; font-weight: 600; margin-bottom: 6px; font-size: .92rem; }
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font: inherit;
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  input[readonly] { background: #ecefef; color: var(--muted); cursor: not-allowed; }
+  textarea { min-height: 110px; resize: vertical; }
+  input:focus, select:focus, textarea:focus {
+    outline: 3px solid rgba(60,219,192,.45);
+    border-color: var(--accent);
+  }
+  .invalid { border-color: var(--err) !important; }
+  .error { color: var(--err); font-size: .82rem; margin-top: 4px; min-height: 1em; }
+  .lock { font-size: .75rem; color: var(--muted); font-weight: 400; }
+  #grp-justificativa { display: none; }
+  #grp-justificativa.show { display: block; }
+  .counter-line { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: .82rem; }
+  #contador {
+    font-weight: 700;
+    color: var(--err);
+    transition: color .3s ease;
+  }
+  #contador.ok { color: var(--ok); }
+  .bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .bar span { display: block; height: 100%; width: 0; background: var(--err); transition: width .3s ease, background-color .3s ease; }
+  .bar span.ok { background: var(--ok); }
+  button {
+    background: var(--base);
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px 24px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color .2s, color .2s;
+  }
+  button:hover:not(:disabled) { background: var(--accent); color: var(--base); }
+  button:disabled { opacity: .6; cursor: wait; }
+  #alerta {
+    display: none;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border-radius: 6px;
+    background: #e6fbf7;
+    border: 1px solid var(--accent);
+    border-left: 6px solid var(--accent);
+    font-weight: 600;
+  }
+  #alerta.show { display: block; }
+  .demo-note { margin-top: 16px; font-size: .78rem; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">POSITIVO S+</div>
+    <h1>Acesso a Sistemas corporativos</h1>
+    <p>Seus dados já foram preenchidos pelo login</p>
+  </div>
+</header>
+
+<main>
+  <div id="alerta" role="alert" aria-live="assertive"></div>
+
+  <form id="form" novalidate>
+    <fieldset>
+      <legend>Dados do Solicitante</legend>
+      <div class="row">
+        <div class="field">
+          <label for="nome">Nome <span class="lock">(bloqueado)</span></label>
+          <input id="nome" name="nome" type="text" readonly aria-readonly="true" tabindex="-1">
+        </div>
+        <div class="field">
+          <label for="matricula">Matrícula <span class="lock">(bloqueado)</span></label>
+          <input id="matricula" name="matricula" type="text" readonly aria-readonly="true" tabindex="-1">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Solicitação</legend>
+      <div class="row">
+        <div class="field">
+          <label for="sistema">Sistema *</label>
+          <select id="sistema" name="sistema" required aria-describedby="err-sistema">
+            <option value="">Selecione...</option>
+            <option value="SEI">SEI</option>
+            <option value="SIGEPE">SIGEPE</option>
+            <option value="GLPI">GLPI</option>
+          </select>
+          <div class="error" id="err-sistema"></div>
+        </div>
+        <div class="field">
+          <label for="tipo">Tipo de Acesso *</label>
+          <select id="tipo" name="tipo" required aria-describedby="err-tipo">
+            <option value="">Selecione...</option>
+            <option value="Leitura">Leitura</option>
+            <option value="Escrita">Escrita</option>
+          </select>
+          <div class="error" id="err-tipo"></div>
+        </div>
+      </div>
+
+      <div class="field" id="grp-justificativa">
+        <label for="justificativa">Justificativa *</label>
+        <textarea id="justificativa" name="justificativa" aria-describedby="contador err-justificativa"
+                  placeholder="Descreva o motivo da necessidade de acesso de escrita (mínimo 20 caracteres)"></textarea>
+        <div class="bar"><span id="barra"></span></div>
+        <div class="counter-line">
+          <span class="error" id="err-justificativa"></span>
+          <span id="contador" aria-live="polite">0/20</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <button type="submit" id="enviar">Abrir chamado</button>
+  </form>
+  <p class="demo-note">Página de homologação: nenhuma chamada real de API é realizada. A resposta do MCP é simulada.</p>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var MIN_JUST = 20;
+
+  // Sessão simulada (valores provisórios: substituir pelos dados de usuario-logado.json)
+  var SESSAO_MOCK = { nome: 'Usuário Demonstração', matricula: '000000' };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('form'), sistema = $('sistema'), tipo = $('tipo'),
+      grp = $('grp-justificativa'), just = $('justificativa'),
+      contador = $('contador'), barra = $('barra'),
+      alerta = $('alerta'), btn = $('enviar');
+
+  $('nome').value = SESSAO_MOCK.nome;
+  $('matricula').value = SESSAO_MOCK.matricula;
+
+  function setErro(campo, msg) {
+    $('err-' + campo).textContent = msg || '';
+    var el = $(campo);
+    if (msg) { el.classList.add('invalid'); el.setAttribute('aria-invalid', 'true'); }
+    else { el.classList.remove('invalid'); el.removeAttribute('aria-invalid'); }
+  }
+
+  function atualizaContador() {
+    var n = just.value.length;
+    var ok = n >= MIN_JUST;
+    contador.textContent = n + '/' + MIN_JUST;
+    contador.classList.toggle('ok', ok);
+    barra.classList.toggle('ok', ok);
+    barra.style.width = Math.min(100, (n / MIN_JUST) * 100) + '%';
+    if (ok) setErro('justificativa', '');
+  }
+
+  function atualizaCondicional() {
+    var escrita = tipo.value === 'Escrita';
+    grp.classList.toggle('show', escrita);
+    just.required = escrita;
+    if (!escrita) {
+      just.value = '';
+      setErro('justificativa', '');
+    }
+    atualizaContador();
+  }
+
+  tipo.addEventListener('change', function () { setErro('tipo', ''); atualizaCondicional(); });
+  sistema.addEventListener('change', function () { setErro('sistema', ''); });
+  just.addEventListener('input', atualizaContador);
+
+  function valida() {
+    var valido = true;
+    if (!sistema.value) { setErro('sistema', 'Selecione o sistema.'); valido = false; }
+    if (!tipo.value) { setErro('tipo', 'Selecione o tipo de acesso.'); valido = false; }
+    if (tipo.value === 'Escrita' && just.value.trim().length < MIN_JUST) {
+      setErro('justificativa', 'Mínimo de ' + MIN_JUST + ' caracteres.');
+      valido = false;
+    }
+    return valido;
+  }
+
+  // Simula a resposta do MCP (sem rede)
+  function mockMcpAbrirChamado(payload) {
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        resolve({
+          status: 'ok',
+          id: Math.floor(Math.random() * 99999) + 1,
+          ano: new Date().getFullYear(),
+          payload: payload
+        });
+      }, 600);
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    alerta.classList.remove('show');
+    if (!valida()) return;
+
+    var payload = {
+      solicitante: SESSAO_MOCK,
+      sistema: sistema.value,
+      tipoAcesso: tipo.value,
+      justificativa: tipo.value === 'Escrita' ? just.value.trim() : null
+    };
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+    mockMcpAbrirChamado(payload).then(function (resp) {
+      var num = String(resp.id).padStart(5, '0');
+      alerta.textContent = 'Chamado #' + resp.ano + '-' + num + ' aberto com sucesso';
+      alerta.classList.add('show');
+      alerta.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      btn.disabled = false;
+      btn.textContent = 'Abrir chamado';
+      form.reset();
+      $('nome').value = SESSAO_MOCK.nome;
+      $('matricula').value = SESSAO_MOCK.matricula;
+      atualizaCondicional();
+    });
+  });
+
+  atualizaCondicional();
+})();
+</script>
+</body>
+</html>

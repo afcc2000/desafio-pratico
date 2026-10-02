@@ -1,0 +1,16 @@
+{
+  "equipe": "gabrielpaulo",
+  "versao": "v1",
+  "executado_em": "2026-10-02T19:38:26+00:00",
+  "duracao_s": 41.9,
+  "caracteres_prompt": 1679,
+  "sha256_prompt": "22dbc6c27ca194c5de294d0f1d9ba357dfe33363c7b6f051ba78c15e6c2b983a",
+  "gerou_html": true,
+  "briefing_colado_pct": 0,
+  "custo_usd": 0.28619799999999995,
+  "modelos": [
+    "claude-sonnet-5-5"
+  ],
+  "sessao": "c2506dd0-efd6-4fe9-b964-17fee6c5efad",
+  "resposta_final": "Criei o `index.html` na pasta atual, mas montei a página só com as regras do seu enunciado, porque não consegui ler os três arquivos de referência. A permissão de leitura foi negada e não contornei isso. Também não abri a página no navegador, então nada foi testado.\n\n**O que isso muda**\n- **Sessão simulada:** nome e matrícula são valores provisórios, \"Usuário Demonstração\" e \"000000\". Ficam na constante `SESSAO_MOCK` no script. Troque pelos dados de `usuario-logado.json`.\n- **Estrutura do formulário e mock de resposta:** não conferi nada contra `formulario-exportado.json`. Os rótulos, as opções e o formato do mock vêm só do enunciado.\n- **Critérios do QA:** não verifiquei a página contra o `contrato-qa.md`, e é ele que define a homologação. Antes de homologar, confira a página com ele ou me dê acesso a esses arquivos.\n\n**O que a página faz**\n- **Cabeçalho:** tem o título e o subtítulo pedidos.\n- **Solicitante:** nome e matrícula vêm da sessão simulada e ficam somente leitura.\n- **Seleção:** Sistema (SEI, SIGEPE, GLPI) e Tipo de Acesso (Leitura, Escrita), ambos obrigatórios.\n- **Justificativa:**\n  - Só aparece quando o tipo é Escrita e exige no mínimo 20 caracteres.\n  - O contador mostra `0/20` e passa de vermelho para verde, com transição, ao chegar em 20. Há também uma barra de progresso.\n  - Ao voltar para Leitura, o campo some e é limpo.\n- **Envio:** a resposta do MCP é simulada, sem rede. O alerta mostra `Chamado #AAAA-NNNNN aberto com sucesso`, com o ano corrente e o ID aleatório de 5 dígitos com zeros à esquerda.\n- **Visual:** usa #2C2A29 e #3CDBC0, em HTML, CSS e JS num arquivo só, sem bibliotecas externas."
+}
