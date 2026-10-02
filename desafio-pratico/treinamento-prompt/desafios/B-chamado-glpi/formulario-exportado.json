@@ -1,0 +1,11 @@
+{
+  "formcreator_export": "2026-09-10",
+  "form": {
+    "name": "Solicitação de acesso a sistema",
+    "fields": [
+      {"name": "sistema", "type": "select", "required": true, "values": ["SEI", "SIGEPE", "GLPI", "SIAFI"]},
+      {"name": "tipo_acesso", "type": "radios", "required": true, "values": ["Leitura", "Escrita", "Administrador"]},
+      {"name": "justificativa", "type": "textarea", "required": true, "min_length": 10}
+    ]
+  }
+}

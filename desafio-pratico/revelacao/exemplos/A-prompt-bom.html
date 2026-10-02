@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estella · Painel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #2C2A29;
+            color: #EDEDEA;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .alerta {
+            background-color: #D32F2F;
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .alerta.visivel {
+            display: block;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px;
+            border-bottom: 1px solid #444;
+        }
+
+        .titulo {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .atualizado {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        .card {
+            flex: 1;
+            background-color: #3A3835;
+            padding: 20px;
+            border-radius: 4px;
+            border-left: 4px solid #3CDBC0;
+        }
+
+        .card-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #3CDBC0;
+        }
+
+        .content {
+            display: flex;
+            gap: 20px;
+            padding: 0 20px 20px 20px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .coluna-esquerda {
+            flex: 0 0 40%;
+            overflow-y: auto;
+        }
+
+        .coluna-direita {
+            flex: 0 0 60%;
+            overflow-y: auto;
+        }
+
+        .grafico-titulo {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #EDEDEA;
+        }
+
+        .barra-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .barra {
+            height: 24px;
+            border-radius: 2px;
+            background-color: #3CDBC0;
+            min-width: 20px;
+        }
+
+        .barra-ufba {
+            background-color: #FFB25C;
+        }
+
+        .barra-label {
+            font-size: 12px;
+            color: #EDEDEA;
+            min-width: 50px;
+        }
+
+        .barra-valor {
+            font-size: 12px;
+            color: #EDEDEA;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        thead {
+            border-bottom: 1px solid #444;
+        }
+
+        th {
+            text-align: left;
+            padding: 10px 8px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #3A3835;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-weight: 500;
+            display: inline-block;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .status-resolvido {
+            background-color: #2E7D32;
+            color: white;
+        }
+
+        .status-transbordo {
+            background-color: #C62828;
+            color: white;
+        }
+
+        .status-andamento {
+            background-color: #F9A825;
+            color: white;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="alerta" data-testid="alerta-transbordo">Transbordo acima da meta de 20%</div>
+
+    <div class="header">
+        <div class="titulo" data-testid="titulo">Estella · Painel de Setembro</div>
+        <div class="atualizado" data-testid="atualizado">Atualizado em 30/09/2026 18:00</div>
+    </div>
+
+    <div class="cards-container">
+        <div class="card" data-testid="card-atendimentos">
+            <div class="card-label">Atendimentos</div>
+            <div class="card-value">15.090</div>
+        </div>
+        <div class="card" data-testid="card-resolvidos">
+            <div class="card-label">Resolvidos pela Estella</div>
+            <div class="card-value">78%</div>
+        </div>
+        <div class="card" data-testid="card-transbordo">
+            <div class="card-label">Transbordo para humano</div>
+            <div class="card-value">22%</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="coluna-esquerda">
+            <div class="grafico-titulo" data-testid="grafico-orgaos">Distribuição por Órgão</div>
+
+            <div class="barra-container">
+                <div class="barra-label">CNPq</div>
+                <div class="barra" data-testid="barra-cnpq" style="width: 240px;"></div>
+                <div class="barra-valor">3.920</div>
+            </div>
+
+            <div class="barra-container">
+                <div class="barra-label">UFBA</div>
+                <div class="barra barra-ufba" data-testid="barra-ufba" style="width: 176px;"></div>
+                <div class="barra-valor">2.870</div>
+            </div>
+
+            <div class="barra-container">
+                <div class="barra-label">DNIT</div>
+                <div class="barra" data-testid="barra-dnit" style="width: 148px;"></div>
+                <div class="barra-valor">2.410</div>
+            </div>
+
+            <div class="barra-container">
+                <div class="barra-label">CAPES</div>
+                <div class="barra" data-testid="barra-capes" style="width: 120px;"></div>
+                <div class="barra-valor">1.960</div>
+            </div>
+
+            <div class="barra-container">
+                <div class="barra-label">MJ</div>
+                <div class="barra" data-testid="barra-mj" style="width: 81px;"></div>
+                <div class="barra-valor">1.320</div>
+            </div>
+        </div>
+
+        <div class="coluna-direita">
+            <div class="grafico-titulo">Últimas conversas</div>
+            <table data-testid="tabela-conversas">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Órgão</th>
+                        <th>Assunto</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>17:58</td>
+                        <td>CNPq</td>
+                        <td>Bolsa de produtividade</td>
+                        <td><span class="status status-resolvido" data-testid="status">Resolvido</span></td>
+                    </tr>
+                    <tr>
+                        <td>17:51</td>
+                        <td>UFBA</td>
+                        <td>Trancamento de matrícula</td>
+                        <td><span class="status status-andamento" data-testid="status">Em andamento</span></td>
+                    </tr>
+                    <tr>
+                        <td>17:44</td>
+                        <td>DNIT</td>
+                        <td>Recurso de multa</td>
+                        <td><span class="status status-transbordo" data-testid="status">Transbordo</span></td>
+                    </tr>
+                    <tr>
+                        <td>17:37</td>
+                        <td>CAPES</td>
+                        <td>Acesso à Plataforma Sucupira</td>
+                        <td><span class="status status-resolvido" data-testid="status">Resolvido</span></td>
+                    </tr>
+                    <tr>
+                        <td>17:30</td>
+                        <td>MJ</td>
+                        <td>Emissão de certidão</td>
+                        <td><span class="status status-transbordo" data-testid="status">Transbordo</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function verificarTransbordo() {
+            const metaTransbordo = 20;
+            const transbordo = 22;
+            const alerta = document.querySelector('[data-testid="alerta-transbordo"]');
+
+            if (transbordo > metaTransbordo) {
+                alerta.classList.add('visivel');
+            } else {
+                alerta.classList.remove('visivel');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', verificarTransbordo);
+    </script>
+</body>
+</html>

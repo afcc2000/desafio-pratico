@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitação de acesso a sistema - GLPI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #2C2A29;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #F4F4F2;
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2C2A29;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .subtitulo {
+            color: #6B6A67;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2C2A29;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .asterisco {
+            color: #D32F2F;
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        input[type="text"]:readonly {
+            background-color: #E8E8E8;
+            color: #666;
+            cursor: default;
+        }
+
+        select,
+        textarea {
+            resize: vertical;
+        }
+
+        textarea {
+            min-height: 100px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .radio-option label {
+            margin-bottom: 0;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        .counter {
+            font-size: 12px;
+            margin-top: 4px;
+            font-weight: 500;
+            color: #6B6A67;
+        }
+
+        .error {
+            color: #D32F2F;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-continuar {
+            background-color: #3CDBC0;
+            color: white;
+        }
+
+        .btn-continuar:hover {
+            background-color: #2DBFAD;
+        }
+
+        .btn-voltar {
+            background-color: #6B6A67;
+            color: white;
+        }
+
+        .btn-voltar:hover {
+            background-color: #555;
+        }
+
+        .btn-abrir {
+            background-color: #3CDBC0;
+            color: white;
+        }
+
+        .btn-abrir:hover {
+            background-color: #2DBFAD;
+        }
+
+        .form-acesso {
+            display: block;
+        }
+
+        .form-acesso.hidden {
+            display: none;
+        }
+
+        .resumo {
+            display: none;
+        }
+
+        .resumo.show {
+            display: block;
+        }
+
+        .resumo h2 {
+            color: #2C2A29;
+            margin-bottom: 24px;
+        }
+
+        .resumo-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #DDD;
+        }
+
+        .resumo-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .resumo-label {
+            color: #6B6A67;
+            font-size: 12px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .resumo-valor {
+            color: #2C2A29;
+            font-size: 16px;
+            font-weight: 500;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .mensagem-sucesso {
+            background-color: #E8F5E9;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            padding: 16px;
+            color: #2E7D32;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .mensagem-sucesso.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- FORMULÁRIO -->
+        <form id="form-acesso" class="form-acesso">
+            <h1 data-testid="titulo">Solicitação de acesso a sistema</h1>
+            <p class="subtitulo" data-testid="subtitulo">Seus dados já foram preenchidos pelo login</p>
+
+            <!-- Nome e Matrícula -->
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <input
+                    type="text"
+                    id="nome"
+                    data-testid="nome"
+                    value="Marina Souza"
+                    readonly
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="matricula">Matrícula</label>
+                <input
+                    type="text"
+                    id="matricula"
+                    data-testid="matricula"
+                    value="48213"
+                    readonly
+                >
+            </div>
+
+            <!-- Sistema -->
+            <div class="form-group">
+                <label for="campo-sistema">
+                    Sistema
+                    <span class="asterisco" data-testid="asterisco">*</span>
+                </label>
+                <select id="campo-sistema" data-testid="campo-sistema">
+                    <option value="">Selecione</option>
+                    <option value="SEI">SEI</option>
+                    <option value="SIGEPE">SIGEPE</option>
+                    <option value="GLPI">GLPI</option>
+                </select>
+                <div class="error" data-testid="erro-sistema">Campo obrigatório</div>
+            </div>
+
+            <!-- Tipo de Acesso -->
+            <div class="form-group">
+                <label>
+                    Tipo de acesso
+                    <span class="asterisco" data-testid="asterisco">*</span>
+                </label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input
+                            type="radio"
+                            id="opcao-leitura"
+                            name="tipo"
+                            value="leitura"
+                            data-testid="opcao-leitura"
+                        >
+                        <label for="opcao-leitura">Leitura</label>
+                    </div>
+                    <div class="radio-option">
+                        <input
+                            type="radio"
+                            id="opcao-escrita"
+                            name="tipo"
+                            value="escrita"
+                            data-testid="opcao-escrita"
+                        >
+                        <label for="opcao-escrita">Escrita</label>
+                    </div>
+                </div>
+                <div class="error" data-testid="erro-tipo">Campo obrigatório</div>
+            </div>
+
+            <!-- Justificativa -->
+            <div class="form-group hidden" id="grupo-justificativa">
+                <label for="campo-justificativa">
+                    Justificativa
+                    <span class="asterisco" data-testid="asterisco">*</span>
+                </label>
+                <textarea
+                    id="campo-justificativa"
+                    data-testid="campo-justificativa"
+                    placeholder="Descreva a justificativa para o acesso..."
+                ></textarea>
+                <div class="counter" data-testid="contador">0/20</div>
+                <div class="error" data-testid="erro-justificativa">Campo obrigatório</div>
+            </div>
+
+            <!-- Botão Continuar -->
+            <div class="buttons">
+                <button
+                    type="button"
+                    id="btn-continuar"
+                    data-testid="btn-continuar"
+                    class="btn-continuar"
+                >
+                    Continuar
+                </button>
+            </div>
+        </form>
+
+        <!-- RESUMO -->
+        <div id="resumo" data-testid="resumo" class="resumo">
+            <h2>Resumo da Solicitação</h2>
+
+            <div class="mensagem-sucesso" data-testid="mensagem-sucesso"></div>
+
+            <div class="resumo-item">
+                <div class="resumo-label">Sistema</div>
+                <div class="resumo-valor" id="resumo-sistema"></div>
+            </div>
+
+            <div class="resumo-item">
+                <div class="resumo-label">Tipo de Acesso</div>
+                <div class="resumo-valor" id="resumo-tipo"></div>
+            </div>
+
+            <div class="resumo-item">
+                <div class="resumo-label">Justificativa</div>
+                <div class="resumo-valor" id="resumo-justificativa"></div>
+            </div>
+
+            <div class="buttons">
+                <button
+                    type="button"
+                    id="btn-voltar"
+                    data-testid="btn-voltar"
+                    class="btn-voltar"
+                >
+                    Voltar e editar
+                </button>
+                <button
+                    type="button"
+                    id="btn-abrir"
+                    data-testid="btn-abrir"
+                    class="btn-abrir"
+                >
+                    Abrir chamado
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('form-acesso');
+        const campoSistema = document.getElementById('campo-sistema');
+        const radioTipo = document.querySelectorAll('input[name="tipo"]');
+        const campoJustificativa = document.getElementById('campo-justificativa');
+        const grupoJustificativa = document.getElementById('grupo-justificativa');
+        const contador = document.querySelector('[data-testid="contador"]');
+        const btnContinuar = document.getElementById('btn-continuar');
+        const resumo = document.getElementById('resumo');
+        const btnVoltar = document.getElementById('btn-voltar');
+        const btnAbrir = document.getElementById('btn-abrir');
+        const erroSistema = document.querySelector('[data-testid="erro-sistema"]');
+        const erroTipo = document.querySelector('[data-testid="erro-tipo"]');
+        const erroJustificativa = document.querySelector('[data-testid="erro-justificativa"]');
+
+        function atualizarContador() {
+            const length = campoJustificativa.value.length;
+            contador.textContent = `${length}/20`;
+
+            if (length >= 20) {
+                contador.style.color = '#2E7D32';
+            } else {
+                contador.style.color = '#6B6A67';
+            }
+        }
+
+        function limparErro(elemento) {
+            elemento.classList.remove('show');
+        }
+
+        function mostrarErro(elemento) {
+            elemento.classList.add('show');
+        }
+
+        // Mostrar/ocultar justificativa quando tipo muda
+        radioTipo.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'escrita') {
+                    grupoJustificativa.classList.remove('hidden');
+                } else {
+                    grupoJustificativa.classList.add('hidden');
+                    campoJustificativa.value = '';
+                    atualizarContador();
+                    limparErro(erroJustificativa);
+                }
+                limparErro(erroTipo);
+            });
+        });
+
+        // Atualizar contador de caracteres
+        campoJustificativa.addEventListener('input', () => {
+            atualizarContador();
+            limparErro(erroJustificativa);
+        });
+
+        // Limpar erros ao mudar sistemas
+        campoSistema.addEventListener('change', () => {
+            limparErro(erroSistema);
+        });
+
+        // Validação ao clicar Continuar
+        btnContinuar.addEventListener('click', () => {
+            let temErro = false;
+
+            // Limpar todos os erros
+            limparErro(erroSistema);
+            limparErro(erroTipo);
+            limparErro(erroJustificativa);
+
+            // Validar Sistema
+            if (!campoSistema.value) {
+                mostrarErro(erroSistema);
+                temErro = true;
+            }
+
+            // Validar Tipo
+            const tipoSelecionado = document.querySelector('input[name="tipo"]:checked');
+            if (!tipoSelecionado) {
+                mostrarErro(erroTipo);
+                temErro = true;
+            }
+
+            // Validar Justificativa (apenas se Escrita)
+            if (tipoSelecionado && tipoSelecionado.value === 'escrita') {
+                if (campoJustificativa.value.length < 20) {
+                    mostrarErro(erroJustificativa);
+                    temErro = true;
+                }
+            }
+
+            // Se não há erros, mostrar resumo
+            if (!temErro) {
+                form.classList.add('hidden');
+                mostrarResumo();
+            }
+        });
+
+        function mostrarResumo() {
+            const sistema = campoSistema.value;
+            const tipoSelecionado = document.querySelector('input[name="tipo"]:checked').value;
+            const tipo = tipoSelecionado === 'leitura' ? 'Leitura' : 'Escrita';
+            const justificativa = campoJustificativa.value;
+
+            document.getElementById('resumo-sistema').textContent = sistema;
+            document.getElementById('resumo-tipo').textContent = tipo;
+            document.getElementById('resumo-justificativa').textContent = justificativa;
+
+            resumo.classList.add('show');
+        }
+
+        // Botão Voltar
+        btnVoltar.addEventListener('click', () => {
+            resumo.classList.remove('show');
+            form.classList.remove('hidden');
+
+            const tipoSelecionado = document.querySelector('input[name="tipo"]:checked');
+            if (tipoSelecionado && tipoSelecionado.value === 'escrita') {
+                grupoJustificativa.classList.remove('hidden');
+            }
+
+            document.querySelector('[data-testid="mensagem-sucesso"]').classList.remove('show');
+        });
+
+        // Botão Abrir Chamado
+        btnAbrir.addEventListener('click', () => {
+            const mensagem = document.querySelector('[data-testid="mensagem-sucesso"]');
+            mensagem.textContent = 'Chamado #2026-00412 aberto com sucesso';
+            mensagem.classList.add('show');
+        });
+    </script>
+</body>
+</html>
